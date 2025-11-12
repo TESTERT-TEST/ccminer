@@ -42,9 +42,16 @@ jobs:
         x86_64-w64-mingw32-gcc test.c -o test.exe
         file test.exe
 
+    - name: Prepare configure
+      run: |
+        # Обновляем autoconf/automake для патченного configure.ac
+        autoreconf -fiv
+
     - name: Run autogen and configure
       run: |
-        ./autogen.sh
+        ./autogen.sh || true
+        CC=x86_64-w64-mingw32-gcc \
+        CXX=x86_64-w64-mingw32-g++ \
         ./configure --host=x86_64-w64-mingw32 \
           CPPFLAGS="-I/usr/x86_64-w64-mingw32/include" \
           LDFLAGS="-L/usr/x86_64-w64-mingw32/lib" \

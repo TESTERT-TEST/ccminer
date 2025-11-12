@@ -1,4 +1,4 @@
-name: Build ccminer Windows x64 Static
+name: Build ccminer Windows x64
 
 on:
   push:
@@ -26,24 +26,23 @@ jobs:
           pkg-config \
           libcurl4-openssl-dev \
           libssl-dev \
-          libjansson-dev \
-          zlib1g-dev
+          libjansson-dev
 
-    - name: Build ccminer with static linking
+    - name: Setup pkg-config for Windows
+      run: |
+        # Настройка pkg-config для поиска Windows библиотек
+        export PKG_CONFIG_PATH=/usr/x86_64-w64-mingw32/lib/pkgconfig
+        export PKG_CONFIG_LIBDIR=/usr/x86_64-w64-mingw32/lib
+
+    - name: Build ccminer
       run: |
         ./autogen.sh
-        
-        # Статическая компиляция
-        ./configure --host=x86_64-w64-mingw32 \
-          CFLAGS="-static -O2" \
-          CXXFLAGS="-static -O2" \
-          LDFLAGS="-static -lcurl -lssl -lcrypto -ljansson -lz -lpthread -lws2_32"
-        
+        ./configure --host=x86_64-w64-mingw32
         make -j$(nproc)
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ccminer-windows-x64-static
+        name: ccminer-windows-x64
         path: ccminer.exe
         retention-days: 7

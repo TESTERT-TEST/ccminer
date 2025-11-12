@@ -1,4 +1,4 @@
-name: Build ccminer Windows x64
+name: Build ccminer Windows
 
 on:
   push:
@@ -13,26 +13,21 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Install all dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
           build-essential \
-          gcc-mingw-w64-x86-64 \
-          g++-mingw-w64-x86-64 \
+          gcc-mingw-w64 \
+          g++-mingw-w64 \
           libtool \
           automake \
           autoconf \
           pkg-config \
           libcurl4-openssl-dev \
           libssl-dev \
-          libjansson-dev
-
-    - name: Setup pkg-config for Windows
-      run: |
-        # Настройка pkg-config для поиска Windows библиотек
-        export PKG_CONFIG_PATH=/usr/x86_64-w64-mingw32/lib/pkgconfig
-        export PKG_CONFIG_LIBDIR=/usr/x86_64-w64-mingw32/lib
+          libjansson-dev \
+          zlib1g-dev
 
     - name: Build ccminer
       run: |
@@ -43,6 +38,6 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ccminer-windows-x64
+        name: ccminer-windows
         path: ccminer.exe
         retention-days: 7

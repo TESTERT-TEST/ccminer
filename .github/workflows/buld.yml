@@ -35,14 +35,28 @@ jobs:
           libssl-dev \
           libjansson-dev
 
+    - name: Install Windows OpenSSL libraries
+      run: |
+        # Установка OpenSSL для Windows
+        sudo apt-get install -y \
+          libssl-dev \
+          libssl1.1 \
+          mingw-w64 \
+          mingw-w64-common \
+          mingw-w64-tools
+
     - name: Build ccminer
       run: |
         ./autogen.sh
         
         if [ "${{ matrix.architecture }}" = "x64" ]; then
-          ./configure --host=x86_64-w64-mingw32 --without-cuda
+          ./configure --host=x86_64-w64-mingw32 --without-cuda \
+            CPPFLAGS="-I/usr/x86_64-w64-mingw32/include" \
+            LDFLAGS="-L/usr/x86_64-w64-mingw32/lib"
         else
-          ./configure --host=i686-w64-mingw32 --without-cuda
+          ./configure --host=i686-w64-mingw32 --without-cuda \
+            CPPFLAGS="-I/usr/i686-w64-mingw32/include" \
+            LDFLAGS="-L/usr/i686-w64-mingw32/lib"
         fi
         
         make -j$(nproc)

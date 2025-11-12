@@ -84,41 +84,85 @@
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;USE_WRAPNVML;SCRYPT_KECCAK512;SCRYPT_CHACHA;SCRYPT_CHOOSE_COMPILETIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;compat;compat\curl-for-windows\curl\include;compat\jansson;compat\getopt;compat\pthreads;compat\curl-for-windows\openssl\openssl\include;compat\curl-for-windows\zlib;%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir)</AdditionalIncludeDirectories>
-      <StructMemberAlignment>8Bytes</StructMemberAlignment>
-      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <OpenMPSupport>true</OpenMPSupport>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart_static.lib;cuda.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;pthreadVC2.lib;libcurl.x64.lib;openssl.x64.lib;zlib.x64.lib;ws2_32.lib;Wldap32.lib;nvapi64.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>compat\pthreads\x64;compat\curl-for-windows\out\x64\Release\lib;compat\nvapi\amd64;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/NODEFAULTLIB:LIBCMTD %(AdditionalOptions)</AdditionalOptions>
-      <LinkStatus>true</LinkStatus>
-    </Link>
-    <CudaCompile>
-      <CInterleavedPTX>false</CInterleavedPTX>
-      <GenerateLineInfo>true</GenerateLineInfo>
-      <MaxRegCount>80</MaxRegCount>
-      <PtxAsOptionV>true</PtxAsOptionV>
-      <Keep>true</Keep>
-      <CodeGeneration>compute_52,sm_52</CodeGeneration>
-      <Include>$(NVTOOLSEXT_PATH)\include;..\..\..\Common\C99</Include>
-      <TargetMachinePlatform>64</TargetMachinePlatform>
-    </CudaCompile>
-    <CudaLink>
-      <PerformDeviceLink>false</PerformDeviceLink>
-    </CudaLink>
-  </ItemDefinitionGroup>
+  <ClCompile>
+    <WarningLevel>Level3</WarningLevel>
+    <Optimization>Disabled</Optimization>
+    <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    <FunctionLevelLinking>true</FunctionLevelLinking>
+    <PreprocessorDefinitions>
+      WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;USE_WRAPNVML;
+      SCRYPT_KECCAK512;SCRYPT_CHACHA;SCRYPT_CHOOSE_COMPILETIME;
+      %(PreprocessorDefinitions)
+    </PreprocessorDefinitions>
+    <AdditionalIncludeDirectories>
+      $(ProjectDir);
+      $(ProjectDir)compat;
+      $(ProjectDir)compat\jansson;
+      $(ProjectDir)compat\curl-for-windows\curl\include;
+      $(ProjectDir)compat\getopt;
+      $(ProjectDir)compat\pthreads;
+      $(ProjectDir)compat\curl-for-windows\openssl\openssl\include;
+      $(ProjectDir)compat\curl-for-windows\zlib;
+      %(AdditionalIncludeDirectories);
+      $(CudaToolkitIncludeDir)
+    </AdditionalIncludeDirectories>
+    <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    <OpenMPSupport>true</OpenMPSupport>
+  </ClCompile>
+
+  <Link>
+    <GenerateDebugInformation>true</GenerateDebugInformation>
+    <SubSystem>Console</SubSystem>
+    <AdditionalDependencies>
+      cudart_static.lib;cuda.lib;kernel32.lib;user32.lib;gdi32.lib;
+      winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;
+      oleaut32.lib;uuid.lib;pthreadVC2.lib;libcurl.x86.lib;openssl.x86.lib;
+      zlib.x86.lib;ws2_32.lib;Wldap32.lib;nvapi.lib;
+      %(AdditionalDependencies)
+    </AdditionalDependencies>
+    <IgnoreSpecificDefaultLibraries>libcmt.lib;msvcrt.lib</IgnoreSpecificDefaultLibraries>
+    <AdditionalLibraryDirectories>
+      $(ProjectDir)compat\pthreads\x86;
+      $(ProjectDir)compat\curl-for-windows\out\x86\Release\lib;
+      $(ProjectDir)compat\nvapi\x86;
+      %(AdditionalLibraryDirectories);
+      $(CudaToolkitLibDir)
+    </AdditionalLibraryDirectories>
+    <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
+    <LinkStatus>true</LinkStatus>
+  </Link>
+</ItemDefinitionGroup>
+
+<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ClCompile>
+    <WarningLevel>Level3</WarningLevel>
+    <Optimization>MaxSpeed</Optimization>
+    <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    <FunctionLevelLinking>true</FunctionLevelLinking>
+    <IntrinsicFunctions>true</IntrinsicFunctions>
+    <PreprocessorDefinitions>
+      WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;USE_WRAPNVML;
+      SCRYPT_KECCAK512;SCRYPT_CHACHA;SCRYPT_CHOOSE_COMPILETIME;
+      %(PreprocessorDefinitions)
+    </PreprocessorDefinitions>
+    <AdditionalIncludeDirectories>
+      $(ProjectDir);
+      $(ProjectDir)compat;
+      $(ProjectDir)compat\jansson;
+      $(ProjectDir)compat\curl-for-windows\curl\include;
+      $(ProjectDir)compat\getopt;
+      $(ProjectDir)compat\pthreads;
+      $(ProjectDir)compat\curl-for-windows\openssl\openssl\include;
+      $(ProjectDir)compat\curl-for-windows\zlib;
+      %(AdditionalIncludeDirectories);
+      $(CudaToolkitIncludeDir)
+    </AdditionalIncludeDirectories>
+    <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    <OpenMPSupport>true</OpenMPSupport>
+  </ClCompile>
+</ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -163,54 +207,34 @@
     </CudaLink>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
-      <OpenMPSupport>true</OpenMPSupport>
-      <CompileAsManaged>false</CompileAsManaged>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>HAVE_STRUCT_TIMESPEC;WIN32;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;SCRYPT_KECCAK512;SCRYPT_CHACHA;SCRYPT_CHOOSE_COMPILETIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\OpenSSL-Win64\include;.;compat;compat\includes;compat\includes-x64;compat\getopt;compat\includes\pthreads;compat\curl-for-windows\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MinimalRebuild>true</MinimalRebuild>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>normaliz.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;pthreadVC2.lib;libcurl.lib;libcrypto.lib;zlibstat.lib;ws2_32.lib;Wldap32.lib;jansson.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
-      <AdditionalLibraryDirectories>C:\OpenSSL-Win64\lib;compat\libs\x64;compat\nvapi\amd64;%(AdditionalIncludeDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <LinkStatus>false</LinkStatus>
-      <LargeAddressAware>true</LargeAddressAware>
-    </Link>
-    <CudaCompile>
-      <CInterleavedPTX>false</CInterleavedPTX>
-      <MaxRegCount>196</MaxRegCount>
-      <PtxAsOptionV>false</PtxAsOptionV>
-      <Keep>true</Keep>
-      <CodeGeneration>compute_52,sm_52</CodeGeneration>
-      <Include>$(NVTOOLSEXT_PATH)\include</Include>
-      <Optimization>O3</Optimization>
-      <TargetMachinePlatform>64</TargetMachinePlatform>
-      <CudaRuntime>Shared</CudaRuntime>
-      <FastMath>true</FastMath>
-      <Runtime>MT</Runtime>
-      <RuntimeChecks>Default</RuntimeChecks>
-      <TypeInfo>false</TypeInfo>
-      <InterleaveSourceInPTX>false</InterleaveSourceInPTX>
-    </CudaCompile>
-    <CudaLink>
-      <Optimization>O3</Optimization>
-      <PerformDeviceLink>false</PerformDeviceLink>
-    </CudaLink>
-  </ItemDefinitionGroup>
+  <ClCompile>
+    <WarningLevel>Level3</WarningLevel>
+    <Optimization>MaxSpeed</Optimization>
+    <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    <FunctionLevelLinking>true</FunctionLevelLinking>
+    <IntrinsicFunctions>true</IntrinsicFunctions>
+    <PreprocessorDefinitions>
+      WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;USE_WRAPNVML;
+      SCRYPT_KECCAK512;SCRYPT_CHACHA;SCRYPT_CHOOSE_COMPILETIME;
+      %(PreprocessorDefinitions)
+    </PreprocessorDefinitions>
+    <AdditionalIncludeDirectories>
+      $(ProjectDir);
+      $(ProjectDir)compat;
+      $(ProjectDir)compat\jansson;
+      $(ProjectDir)compat\curl-for-windows\curl\include;
+      $(ProjectDir)compat\getopt;
+      $(ProjectDir)compat\pthreads;
+      $(ProjectDir)compat\curl-for-windows\openssl\openssl\include;
+      $(ProjectDir)compat\curl-for-windows\zlib;
+      %(AdditionalIncludeDirectories);
+      $(CudaToolkitIncludeDir)
+    </AdditionalIncludeDirectories>
+    <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    <OpenMPSupport>true</OpenMPSupport>
+  </ClCompile>
+</ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="compat\getopt\getopt_long.c" />
     <ClCompile Include="compat\gettimeofday.c" />
@@ -294,6 +318,7 @@
   </Target>
 
 </Project>
+
 
 
 

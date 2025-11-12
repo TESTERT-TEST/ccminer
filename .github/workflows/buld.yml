@@ -1,4 +1,4 @@
-name: Build ccminer with MSVC
+name: Build ccminer with VS2015
 
 on:
   push:
@@ -11,16 +11,17 @@ jobs:
 
     steps:
       # 1. Клонируем репозиторий
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # 2. Устанавливаем MSBuild / Visual Studio 2022
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
-        with:
-          vs-version: '17.0'
+      # 2. Устанавливаем VS2015 Build Tools через Chocolatey
+      - name: Install VS2015 Build Tools
+        run: choco install visualstudio2015buildtools -y
 
-      # 3. Обновляем Windows SDK с 8.1 на 10.0.22621.0
+      # 3. Инициализация переменных среды для MSBuild 2015
+      - name: Setup VS2015 environment
+        run: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64'
+
+      # 4. Обновляем Windows SDK (если нужно)
       - name: Update Windows SDK version in project
         shell: pwsh
         run: |
@@ -28,14 +29,13 @@ jobs:
           $xml.Project.PropertyGroup.WindowsTargetPlatformVersion = '10.0.22621.0'
           $xml.Save('ccminer.vcxproj')
 
-      # 4. Собираем проект
+      # 5. Собираем проект через MSBuild 2015
       - name: Build ccminer.sln
-        run: msbuild ccminer.sln /p:Configuration=Release /p:Platform=x64 /m
+        run: '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" ccminer.sln /p:Configuration=Release /p:Platform=x64 /m'
 
-      # 5. Загружаем артефакты сборки
+      # 6. Загружаем артефакты сборки
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ccminer-build
-          path: |
-            Release\*
+          path: Release\*

@@ -17,11 +17,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          build-essential \
-          autoconf \
-          automake \
-          libtool \
-          pkg-config \
           mingw-w64 \
           g++-mingw-w64-x86-64 \
           gcc-mingw-w64-x86-64 \
@@ -34,33 +29,20 @@ jobs:
       run: |
         sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
         sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
-        x86_64-w64-mingw32-gcc -v
 
-    - name: Test compiler
+    - name: Compile ccminer manually
       run: |
-        echo "int main() { return 0; }" > test.c
-        x86_64-w64-mingw32-gcc test.c -o test.exe
-        file test.exe
+        # Список всех исходников ccminer
+        SRC_FILES=$(find . -name "*.cpp")
+        
+        # Компиляция вручную через MinGW
+        x86_64-w64-mingw32-g++ -O2 -std=c++11 $SRC_FILES \
+          -I/usr/x86_64-w64-mingw32/include \
+          -L/usr/x86_64-w64-mingw32/lib \
+          -lws2_32 -lwinmm -lssl -lcrypto -lcurl -ljansson -lz \
+          -o ccminer.exe
 
-    - name: Prepare configure
-      run: |
-        # Обновляем autoconf/automake для патченного configure.ac
-        autoreconf -fiv
-
-    - name: Run autogen and configure
-      run: |
-        ./autogen.sh || true
-        CC=x86_64-w64-mingw32-gcc \
-        CXX=x86_64-w64-mingw32-g++ \
-        ./configure --host=x86_64-w64-mingw32 \
-          CPPFLAGS="-I/usr/x86_64-w64-mingw32/include" \
-          LDFLAGS="-L/usr/x86_64-w64-mingw32/lib" \
-          LIBS="-lws2_32 -lwinmm -lssl -lcrypto -lcurl -ljansson -lz"
-
-    - name: Build ccminer
-      run: |
-        make -j$(nproc)
-        ls -lh ccminer.exe || echo "ccminer.exe not found!"
+        ls -lh ccminer.exe
 
     - name: Upload Windows binary
       uses: actions/upload-artifact@v4

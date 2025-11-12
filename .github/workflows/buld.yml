@@ -1,10 +1,8 @@
-name: Build ccminer Windows (Multiple Versions)
+name: Build ccminer Windows
 
 on:
   push:
     branches: [ Verus2.2, master ]
-  release:
-    types: [ published ]
   workflow_dispatch:
 
 jobs:
@@ -33,30 +31,32 @@ jobs:
           pkg-config \
           libcurl4-openssl-dev \
           libssl-dev \
-          libjansson-dev
+          libjansson-dev \
+          zlib1g-dev
 
-    - name: Install Windows OpenSSL libraries
+    - name: Install Windows SSL libraries
       run: |
-        # Установка OpenSSL для Windows
+        # Установка mingw с SSL поддержкой
         sudo apt-get install -y \
-          libssl-dev \
-          libssl1.1 \
           mingw-w64 \
-          mingw-w64-common \
-          mingw-w64-tools
+          libcurl4-openssl-dev
 
-    - name: Build ccminer
+    - name: Build ccminer with static linking
       run: |
         ./autogen.sh
         
         if [ "${{ matrix.architecture }}" = "x64" ]; then
           ./configure --host=x86_64-w64-mingw32 --without-cuda \
-            CPPFLAGS="-I/usr/x86_64-w64-mingw32/include" \
-            LDFLAGS="-L/usr/x86_64-w64-mingw32/lib"
+            --enable-static --disable-shared \
+            CFLAGS="-static -O2" \
+            CXXFLAGS="-static -O2" \
+            LDFLAGS="-static -lcurl -lssl -lcrypto -lz -lpthread -lws2_32"
         else
           ./configure --host=i686-w64-mingw32 --without-cuda \
-            CPPFLAGS="-I/usr/i686-w64-mingw32/include" \
-            LDFLAGS="-L/usr/i686-w64-mingw32/lib"
+            --enable-static --disable-shared \
+            CFLAGS="-static -O2" \
+            CXXFLAGS="-static -O2" \
+            LDFLAGS="-static -lcurl -lssl -lcrypto -lz -lpthread -lws2_32"
         fi
         
         make -j$(nproc)

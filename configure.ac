@@ -76,15 +76,7 @@ case $target in
 esac
 
 AC_CHECK_LIB(jansson, json_loads, request_jansson=false, request_jansson=true)
-if test x$have_win32 = xtrue; then
-  PTHREAD_LIBS=""
-else
-  AC_CHECK_LIB([pthread], [pthread_create], PTHREAD_LIBS="-lpthread",
-    AC_CHECK_LIB([pthreadGC2], [pthread_create], PTHREAD_LIBS="-lpthreadGC2",
-      AC_CHECK_LIB([pthreadGC1], [pthread_create], PTHREAD_LIBS="-lpthreadGC1",
-        AC_CHECK_LIB([pthreadGC], [pthread_create], PTHREAD_LIBS="-lpthreadGC"
-  ))))
-fi
+
 
 AC_CHECK_LIB([z],[gzopen], [], [])
 AC_CHECK_LIB([ssl],[SSL_free], [], [AC_MSG_ERROR([OpenSSL library required])])

@@ -1,52 +1,31 @@
-name: Build ccminer Windows x64
+name: Build with MSVC
 
 on:
   push:
-    branches: [ Verus2.2, master ]
-  workflow_dispatch:
+    branches:
+      - main
+  pull_request:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          mingw-w64 \
-          g++-mingw-w64-x86-64 \
-          gcc-mingw-w64-x86-64 \
-          libcurl4-openssl-dev \
-          libssl-dev \
-          libjansson-dev \
-          zlib1g-dev
+      - name: Setup MSVC Environment
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          vs-version: '17.0' # Visual Studio 2022
 
-    - name: Set MinGW to POSIX
-      run: |
-        sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
-        sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+      - name: Build project
+        run: |
+          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+          msbuild path\to\your_project.sln /p:Configuration=Release /p:Platform=x64
 
-    - name: Compile ccminer manually
-      run: |
-        # Список всех исходников ccminer
-        SRC_FILES=$(find . -name "*.cpp")
-        
-        # Компиляция вручную через MinGW
-        x86_64-w64-mingw32-g++ -O2 -std=c++11 $SRC_FILES \
-          -I/usr/x86_64-w64-mingw32/include \
-          -L/usr/x86_64-w64-mingw32/lib \
-          -lws2_32 -lwinmm -lssl -lcrypto -lcurl -ljansson -lz \
-          -o ccminer.exe
-
-        ls -lh ccminer.exe
-
-    - name: Upload Windows binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: ccminer-windows-x64
-        path: ccminer.exe
-        retention-days: 7
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: path\to\your\project\Release\*

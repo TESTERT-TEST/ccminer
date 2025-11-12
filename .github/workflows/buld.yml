@@ -29,8 +29,6 @@ jobs:
           $xml.SelectNodes('//msb:WindowsTargetPlatformVersion', $ns) | ForEach-Object { $_.'#text' = '10.0.22621.0' }
           $xml.Save('ccminer.vcxproj')
 
-
-
       # 4. Собираем проект
       - name: Build ccminer.sln
         run: msbuild ccminer.sln /p:Configuration=Release /p:Platform=x64 /m

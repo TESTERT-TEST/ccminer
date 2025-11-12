@@ -1,4 +1,4 @@
-name: Build with MSVC
+name: Build ccminer with MSVC
 
 on:
   push:
@@ -11,21 +11,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup MSVC Environment
+      - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
         with:
-          vs-version: '17.0' # Visual Studio 2022
+          vs-version: '17.0'  # Visual Studio 2022
 
-      - name: Build project
+      - name: Build ccminer.sln
         run: |
           "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
-          msbuild path\to\your_project.sln /p:Configuration=Release /p:Platform=x64
+          msbuild ccminer.sln /p:Configuration=Release /p:Platform=x64 /m
 
-      - name: Archive build artifacts
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build
-          path: path\to\your\project\Release\*
+          name: ccminer-build
+          path: |
+            Release\*

@@ -10,20 +10,27 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      # 1. Клонируем репозиторий
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2. Устанавливаем MSBuild / Visual Studio 2022
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
         with:
-          vs-version: '17.0'  # Visual Studio 2022
+          vs-version: '17.0'
 
-      - name: Retarget project to latest Windows SDK
-        run: msbuild ccminer.sln /t:RetargetProjects /p:TargetPlatformVersion=10.0.22621.0
+      # 3. Обновляем Windows SDK с 8.1 на 10.0.22621.0
+      - name: Update Windows SDK version in project
+        run: |
+          powershell -Command "(gc ccminer.vcxproj) -replace '<WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>', '<WindowsTargetPlatformVersion>10.0.22621.0>' | Set-Content ccminer.vcxproj"
+          powershell -Command "(gc ccminer.sln) -replace 'VisualStudioVersion = 12.0.30723.0', 'VisualStudioVersion = 17.0.31903.59' | Set-Content ccminer.sln"
 
+      # 4. Собираем проект
       - name: Build ccminer.sln
         run: msbuild ccminer.sln /p:Configuration=Release /p:Platform=x64 /m
 
+      # 5. Загружаем артефакты сборки
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:

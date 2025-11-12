@@ -22,13 +22,13 @@ jobs:
 
       # 3. Обновляем Windows SDK с 8.1 на 10.0.22621.0
       - name: Update Windows SDK version in project
+        shell: pwsh
         run: |
-               powershell -Command "
-               [xml]$xml = Get-Content 'ccminer.vcxproj'
-               $ns = @{msb='http://schemas.microsoft.com/developer/msbuild/2003'}
-               $xml.SelectNodes('//msb:WindowsTargetPlatformVersion', $ns) | ForEach-Object { $_.'#text' = '10.0.22621.0' }
-               $xml.Save('ccminer.vcxproj')
-               "
+          [xml]$xml = Get-Content -Path 'ccminer.vcxproj' -Raw
+          $ns = @{msb='http://schemas.microsoft.com/developer/msbuild/2003'}
+          $xml.SelectNodes('//msb:WindowsTargetPlatformVersion', $ns) | ForEach-Object { $_.'#text' = '10.0.22621.0' }
+          $xml.Save('ccminer.vcxproj')
+
 
 
       # 4. Собираем проект

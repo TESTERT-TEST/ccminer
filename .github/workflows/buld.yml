@@ -22,7 +22,7 @@ jobs:
 
       # 4. Собираем проект с v140 toolset
       - name: Build ccminer.sln
-        run: msbuild ccminer.sln /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v142 /m
+        run: msbuild ccminer.sln /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v142 /p:AdditionalIncludeDirectories="compat\jansson" /m
 
       # 5. Загружаем артефакты сборки
       - name: Upload build artifacts

@@ -1,4 +1,4 @@
-name: Build ccminer Windows
+name: Build ccminer Windows x64
 
 on:
   push:
@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        architecture: [x64, x86]
     
     steps:
     - name: Checkout
@@ -23,47 +20,23 @@ jobs:
           build-essential \
           gcc-mingw-w64-x86-64 \
           g++-mingw-w64-x86-64 \
-          gcc-mingw-w64-i686 \
-          g++-mingw-w64-i686 \
           libtool \
           automake \
           autoconf \
           pkg-config \
           libcurl4-openssl-dev \
           libssl-dev \
-          libjansson-dev \
-          zlib1g-dev
+          libjansson-dev
 
-    - name: Install Windows SSL libraries
-      run: |
-        # Установка mingw с SSL поддержкой
-        sudo apt-get install -y \
-          mingw-w64 \
-          libcurl4-openssl-dev
-
-    - name: Build ccminer with static linking
+    - name: Build ccminer
       run: |
         ./autogen.sh
-        
-        if [ "${{ matrix.architecture }}" = "x64" ]; then
-          ./configure --host=x86_64-w64-mingw32 --without-cuda \
-            --enable-static --disable-shared \
-            CFLAGS="-static -O2" \
-            CXXFLAGS="-static -O2" \
-            LDFLAGS="-static -lcurl -lssl -lcrypto -lz -lpthread -lws2_32"
-        else
-          ./configure --host=i686-w64-mingw32 --without-cuda \
-            --enable-static --disable-shared \
-            CFLAGS="-static -O2" \
-            CXXFLAGS="-static -O2" \
-            LDFLAGS="-static -lcurl -lssl -lcrypto -lz -lpthread -lws2_32"
-        fi
-        
+        ./configure --host=x86_64-w64-mingw32
         make -j$(nproc)
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ccminer-${{ matrix.architecture }}
+        name: ccminer-windows-x64
         path: ccminer.exe
         retention-days: 7

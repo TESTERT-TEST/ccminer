@@ -2,9 +2,8 @@ name: Build ccminer with MSVC
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
+    branches: [ Verus2.2, master ]
+  workflow_dispatch:
 
 jobs:
   build-windows:
@@ -30,3 +29,4 @@ jobs:
           name: ccminer-build
           path: |
             Release\*
+

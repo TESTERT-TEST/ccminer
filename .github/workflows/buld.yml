@@ -1,4 +1,4 @@
-name: Build ccminer Windows x64
+name: Build ccminer Windows x64 Static
 
 on:
   push:
@@ -27,31 +27,23 @@ jobs:
           libcurl4-openssl-dev \
           libssl-dev \
           libjansson-dev \
-          zlib1g-dev \
-          mingw-w64
+          zlib1g-dev
 
-    - name: Install Windows SSL development libraries
-      run: |
-        # Установка Windows версий библиотек
-        sudo apt-get install -y \
-          libcurl4-openssl-dev \
-          libjansson-dev \
-          libssl-dev
-
-    - name: Build ccminer with Windows libraries
+    - name: Build ccminer with static linking
       run: |
         ./autogen.sh
         
-        # Компиляция с явным указанием путей к библиотекам
+        # Статическая компиляция
         ./configure --host=x86_64-w64-mingw32 \
-          CPPFLAGS="-I/usr/x86_64-w64-mingw32/include" \
-          LDFLAGS="-L/usr/x86_64-w64-mingw32/lib -lcurl -lssl -lcrypto -ljansson -lz -lpthread"
+          CFLAGS="-static -O2" \
+          CXXFLAGS="-static -O2" \
+          LDFLAGS="-static -lcurl -lssl -lcrypto -ljansson -lz -lpthread -lws2_32"
         
         make -j$(nproc)
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ccminer-windows-x64
+        name: ccminer-windows-x64-static
         path: ccminer.exe
         retention-days: 7

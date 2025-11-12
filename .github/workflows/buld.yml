@@ -30,21 +30,22 @@ jobs:
           libjansson-dev \
           zlib1g-dev
 
-    - name: Prepare environment
+    - name: Set MinGW to POSIX
       run: |
-        export CC=x86_64-w64-mingw32-gcc
-        export CXX=x86_64-w64-mingw32-g++
-        export AR=x86_64-w64-mingw32-ar
-        export RANLIB=x86_64-w64-mingw32-ranlib
-        echo "CC=$CC"
-        echo "CXX=$CXX"
+        sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
+        sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+        x86_64-w64-mingw32-gcc -v
+
+    - name: Test compiler
+      run: |
+        echo "int main() { return 0; }" > test.c
+        x86_64-w64-mingw32-gcc test.c -o test.exe
+        file test.exe
 
     - name: Run autogen and configure
       run: |
         ./autogen.sh
         ./configure --host=x86_64-w64-mingw32 \
-          --disable-shared \
-          --enable-static \
           CPPFLAGS="-I/usr/x86_64-w64-mingw32/include" \
           LDFLAGS="-L/usr/x86_64-w64-mingw32/lib" \
           LIBS="-lws2_32 -lwinmm -lssl -lcrypto -lcurl -ljansson -lz"

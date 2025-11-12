@@ -26,12 +26,27 @@ jobs:
           pkg-config \
           libcurl4-openssl-dev \
           libssl-dev \
-          libjansson-dev
+          libjansson-dev \
+          zlib1g-dev \
+          mingw-w64
 
-    - name: Build ccminer
+    - name: Install Windows SSL development libraries
+      run: |
+        # Установка Windows версий библиотек
+        sudo apt-get install -y \
+          libcurl4-openssl-dev \
+          libjansson-dev \
+          libssl-dev
+
+    - name: Build ccminer with Windows libraries
       run: |
         ./autogen.sh
-        ./configure --host=x86_64-w64-mingw32
+        
+        # Компиляция с явным указанием путей к библиотекам
+        ./configure --host=x86_64-w64-mingw32 \
+          CPPFLAGS="-I/usr/x86_64-w64-mingw32/include" \
+          LDFLAGS="-L/usr/x86_64-w64-mingw32/lib -lcurl -lssl -lcrypto -ljansson -lz -lpthread"
+        
         make -j$(nproc)
 
     - name: Upload artifacts

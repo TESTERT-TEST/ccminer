@@ -18,10 +18,11 @@ jobs:
         with:
           vs-version: '17.0'  # Visual Studio 2022
 
+      - name: Retarget project to latest Windows SDK
+        run: msbuild ccminer.sln /t:RetargetProjects /p:TargetPlatformVersion=10.0.22621.0
+
       - name: Build ccminer.sln
-        run: |
-          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
-          msbuild ccminer.sln /p:Configuration=Release /p:Platform=x64 /m
+        run: msbuild ccminer.sln /p:Configuration=Release /p:Platform=x64 /m
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -29,4 +30,3 @@ jobs:
           name: ccminer-build
           path: |
             Release\*
-
